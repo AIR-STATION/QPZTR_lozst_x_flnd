@@ -2,16 +2,15 @@
 #include "GLScene.h"
 
 /* UTILITIES */
-#include "Camera.h"
-#include "SoundPlayer.h"
+
 /* ------------ */
 
-class S02Tutorial :
+class S00Logo :
 	public GLScene
 {
 public:
-	S02Tutorial();
-	virtual ~S02Tutorial();
+	S00Logo();
+	virtual ~S00Logo();
 
 	virtual void init();
 	virtual void exit();
@@ -23,10 +22,9 @@ public:
 	virtual void motion(bool pressed, int x, int y);
 	virtual void update(float fDeltaTime);
 
+	void whitespace();
 private:
 
-	Camera	m_Camera;
 
-	SoundPlayer	m_SoundPlayer;
 };
 

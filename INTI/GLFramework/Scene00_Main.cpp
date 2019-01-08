@@ -12,7 +12,7 @@ S00Logo::~S00Logo()
 
 void S00Logo::init()
 {
-
+	reshape(800, 600);
 }
 
 void S00Logo::exit()
@@ -21,12 +21,6 @@ void S00Logo::exit()
 
 void S00Logo::reset()
 {
-}
-
-void S00Logo::render()
-{
-	
-	print("Test Page", 0, 0, -150);
 }
 
 void S00Logo::reshape(int w, int h)
@@ -38,16 +32,15 @@ void S00Logo::reshape(int w, int h)
 	glMatrixMode(GL_MODELVIEW);
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void S00Logo::keyboard(int key, bool pressed, int x, int y, bool special)
 {
 	if (pressed)
 		switch (key)
 		{
-		case '1': m_Framework->toScene("Opening"); break;
-		case '2': m_Framework->toScene("Tutorial"); break;
-		case '3': m_Framework->toScene("Ingame"); break;
+
 		}
-		
 }
 
 void S00Logo::mouse(int button, bool pressed, int x, int y)
@@ -58,7 +51,23 @@ void S00Logo::motion(bool pressed, int x, int y)
 {
 }
 
-void S00Logo::update(float fDeltaTime)
-
+void S00Logo::render()
 {
+	whitespace();
+}
+
+void S00Logo::update(float fDeltaTime)
+{
+	
+}
+
+void S00Logo::whitespace()
+{
+	glColor3f(1.f, 1.f, 1.f);
+	glBegin(GL_QUADS);
+	glVertex2f(0.f, 0.f);
+	glVertex2f(0.f, DEF_WIN_HEIGHT);
+	glVertex2f(DEF_WIN_WIDTH, DEF_WIN_HEIGHT);
+	glVertex2f(DEF_WIN_WIDTH, 0.f);
+	glEnd();
 }

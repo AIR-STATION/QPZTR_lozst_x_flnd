@@ -2,15 +2,15 @@
 #include "GLScene.h"
 
 /* UTILITIES */
-
+#include "Camera.h"
 /* ------------ */
 
-class S00Logo :
+class S02Tutorial :
 	public GLScene
 {
 public:
-	S00Logo();
-	virtual ~S00Logo();
+	S02Tutorial();
+	virtual ~S02Tutorial();
 
 	virtual void init();
 	virtual void exit();
@@ -23,5 +23,7 @@ public:
 	virtual void update(float fDeltaTime);
 
 private:
+	
+	Camera	m_Camera;
 };
 

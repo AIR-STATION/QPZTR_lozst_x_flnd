@@ -2,6 +2,9 @@
 /* WINAPI */
 #include <Windows.h>
 
+constexpr auto DEF_WIN_WIDTH{ 800 };
+constexpr auto DEF_WIN_HEIGHT{ 600 };
+
 /* C, C++, STL */
 #include <iostream>
 #include <fstream>
