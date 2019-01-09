@@ -24,9 +24,16 @@ public:
 	virtual void update(float fDeltaTime);
 
 	void whitespace();
+	void UI();
+	void DrawGraph();
 	void loading();
 private:
 
 	SettingData* config = SettingData::getInstance();
+
+	std::vector<std::string> row;
+
+	float data[10000];
+	int dataNum;
 };
 
