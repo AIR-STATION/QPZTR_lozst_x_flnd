@@ -3,6 +3,7 @@
 
 /* UTILITIES */
 #include "Camera.h"
+#include "SettingData.h"
 /* ------------ */
 
 class S02Tutorial :
@@ -32,7 +33,6 @@ private:
 	Camera	m_Camera;
 
 	//
-	int SamplingRate;
-	//
+	SettingData* data = SettingData::getInstance();
 };
 

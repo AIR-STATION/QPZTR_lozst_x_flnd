@@ -15,8 +15,6 @@ void S02Tutorial::init()
 	m_Camera.setDistance(200.f);
 	m_Camera.setPerspective(30.f, 0.125f, 3500.f);
 	m_Camera.setSensitivity(1.f);
-
-	SamplingRate = 0;
 }
 
 void S02Tutorial::exit()
@@ -115,7 +113,7 @@ void S02Tutorial::SelectionUI_SamplingRate()
 	glVertex2f(15.f, 28.f);
 	glVertex2f(15.f, 24.f);
 
-	switch (SamplingRate)
+	switch (data->SamplingRate)
 	{
 	case 0:
 		glVertex2f(-45.f, 24.f);
@@ -171,6 +169,13 @@ void S02Tutorial::SelectProcess(int x, int y)
 	{
 		if (x > 147 + 84 * i && x < 147 + 84 * (i + 1))
 			if (y > 430 && y < 460)
-				SamplingRate = i;
+				data->SamplingRate = i;
 	}
+	//
+	if (x > 147 && x < 147 + 168)
+		if (y > 340 && y < 390)
+			printf("date 1\n");
+	if (x > 147 + 168 && x < 147 + 168 + 168)
+		if (y > 340 && y < 390)
+			printf("date 2\n");
 }

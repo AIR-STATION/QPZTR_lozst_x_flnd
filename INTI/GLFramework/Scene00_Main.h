@@ -2,7 +2,7 @@
 #include "GLScene.h"
 
 /* UTILITIES */
-
+#include "SettingData.h"
 /* ------------ */
 
 class S00Logo :
@@ -25,6 +25,6 @@ public:
 	void whitespace();
 private:
 
-
+	SettingData* data = SettingData::getInstance();
 };
 
