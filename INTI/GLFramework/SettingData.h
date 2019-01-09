@@ -9,6 +9,7 @@ private:
 	}
 	~SettingData() {}
 	SettingData(const SettingData& other);
+
 	static SettingData* inst;
 public:
 	static SettingData* getInstance() {
@@ -16,6 +17,9 @@ public:
 		return inst;
 	}
 	
+	std::vector<std::string> csv_read_row(std::istream & file, char delimiter);
+	void save();
+
 	int SamplingRate;
 	int Date_From;
 	int Date_To;

@@ -28,11 +28,20 @@ public:
 	void SelectionUI_SamplingRate();
 	void SelectionUI_Date();
 	void SelectProcess(int x, int y);
+
 private:
 	
 	Camera	m_Camera;
 
 	//
-	SettingData* data = SettingData::getInstance();
+	SettingData* config = SettingData::getInstance();
+
+	bool putDate_one;
+	bool putDate_two;
+
+	int tmp_startDate;
+	int tmp_endDate;
+
+	
 };
 

@@ -13,9 +13,21 @@ if (bConnect == 0):
     print("PLUS가 정상적으로 연결되지 않음. ")
     exit()
 
-objStockMst = win32com.client.Dispatch("CpSysDib.CpSvr9842")
-objStockMst.SetInputValue(0,'1')
+objStockMst = win32com.client.Dispatch("CpSysDib.FutOptChart")
+objStockMst.SetInputValue(0,'10100')
+objStockMst.SetInputValue(1,ord('1'))
+objStockMst.SetInputValue(2,20180105)
+objStockMst.SetInputValue(3,20140101)
+objStockMst.SetInputValue(5, (0,2,3,4,5,8,20,21,27,29))
+objStockMst.SetInputValue(6, ord('m'))
+
 objStockMst.BlockRequest()
+objStockMst.GetDibStatus()
+print(objStockMst.GetHeaderValue(3))
+
+for i in range(0,247):
+    print(objStockMst.GetDataValue(4,i))
+
 
 ## 현재가 객체 구하기
 #objStockMst = win32com.client.Dispatch("DsCbo1.StockMst")

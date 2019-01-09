@@ -3,6 +3,7 @@
 
 /* UTILITIES */
 #include "SettingData.h"
+
 /* ------------ */
 
 class S00Logo :
@@ -23,8 +24,9 @@ public:
 	virtual void update(float fDeltaTime);
 
 	void whitespace();
+	void loading();
 private:
 
-	SettingData* data = SettingData::getInstance();
+	SettingData* config = SettingData::getInstance();
 };
 
