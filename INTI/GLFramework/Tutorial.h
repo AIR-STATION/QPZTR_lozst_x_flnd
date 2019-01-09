@@ -22,8 +22,17 @@ public:
 	virtual void motion(bool pressed, int x, int y);
 	virtual void update(float fDeltaTime);
 
+	void whitespace();
+	void SelectionUI();
+	void SelectionUI_SamplingRate();
+	void SelectionUI_Date();
+	void SelectProcess(int x, int y);
 private:
 	
 	Camera	m_Camera;
+
+	//
+	int SamplingRate;
+	//
 };
 

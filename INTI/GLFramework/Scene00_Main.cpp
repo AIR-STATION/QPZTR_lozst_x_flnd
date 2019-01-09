@@ -39,7 +39,8 @@ void S00Logo::keyboard(int key, bool pressed, int x, int y, bool special)
 	if (pressed)
 		switch (key)
 		{
-
+		case 'a':
+			break;
 		}
 }
 
