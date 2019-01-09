@@ -1,5 +1,6 @@
 import win32com.client
 import ctypes
+import csv
 
 if ctypes.windll.shell32.IsUserAnAdmin():
     print('정상: 관리자권한으로 실행된 프로세스입니다. \n')
@@ -13,21 +14,47 @@ if (bConnect == 0):
     print("PLUS가 정상적으로 연결되지 않음. ")
     exit()
 
+with open('toPython.csv','r', encoding='utf-8') as fd:
+    cin = csv.reader(fd)
+    arrCsv = [row for row in cin]
+    print(arrCsv[0])
+
 objStockMst = win32com.client.Dispatch("CpSysDib.FutOptChart")
 objStockMst.SetInputValue(0,'10100')
 objStockMst.SetInputValue(1,ord('1'))
-objStockMst.SetInputValue(2,20180105)
-objStockMst.SetInputValue(3,20140101)
-objStockMst.SetInputValue(5, (0,2,3,4,5,8,20,21,27,29))
-objStockMst.SetInputValue(6, ord('m'))
+objStockMst.SetInputValue(2,arrCsv[0][2])
+objStockMst.SetInputValue(3,arrCsv[0][1])
+objStockMst.SetInputValue(5, (0,1,5))
+if arrCsv[0][0] == '0':
+    objStockMst.SetInputValue(6, ord('D'))
+elif arrCsv[0][0] == '1':
+    objStockMst.SetInputValue(6, ord('m'))
+elif arrCsv[0][0] == '2':
+    objStockMst.SetInputValue(6, ord('S'))
+elif arrCsv[0][0] == '3':
+    objStockMst.SetInputValue(6, ord('T'))
 
-objStockMst.BlockRequest()
-objStockMst.GetDibStatus()
-print(objStockMst.GetHeaderValue(3))
+if objStockMst.BlockRequest() != 0:
+    print("요청 에러. ")
+    exit()
+if objStockMst.GetDibStatus() != 0:
+    print("상태 에러. ")
+    exit()
 
-for i in range(0,247):
-    print(objStockMst.GetDataValue(4,i))
+#print(objStockMst.GetHeaderValue(3))
 
+#for i in range(0,objStockMst.GetHeaderValue(3)):
+#    print(objStockMst.GetDataValue(2,i))
+
+#CSV output
+#데이터 갯수
+#날짜 시간 값
+
+with open('data.csv', 'w', encoding='utf-8', newline='') as fd:
+    out = csv.writer(fd)
+    out.writerow( [objStockMst.GetHeaderValue(3)] )
+    for i in range(0,objStockMst.GetHeaderValue(3)):
+        out.writerow( [objStockMst.GetDataValue(0,i),objStockMst.GetDataValue(1,i),objStockMst.GetDataValue(2,i)] )
 
 ## 현재가 객체 구하기
 #objStockMst = win32com.client.Dispatch("DsCbo1.StockMst")
