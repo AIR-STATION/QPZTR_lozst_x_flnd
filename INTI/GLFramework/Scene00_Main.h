@@ -33,7 +33,10 @@ private:
 
 	std::vector<std::string> row;
 
-	float data[10000];
+	int date[10000];
+	float data[10000][3];
 	int dataNum;
+
+	bool dateGrid;
 };
 

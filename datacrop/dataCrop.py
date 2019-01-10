@@ -50,6 +50,9 @@ if objStockMst.GetDibStatus() != 0:
 #데이터 갯수
 #날짜 시간 값
 
+print(objStockMst.GetHeaderValue(3))
+
+
 with open('data.csv', 'w', encoding='utf-8', newline='') as fd:
     out = csv.writer(fd)
     out.writerow( [objStockMst.GetHeaderValue(3)] )

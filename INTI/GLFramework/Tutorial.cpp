@@ -79,7 +79,7 @@ void S02Tutorial::keyboard(int key, bool pressed, int x, int y, bool special)
 			}
 			else if (putDate_two)
 			{
-				tmp_startDate /= 10;
+				tmp_endDate /= 10;
 			}
 			break;
 		}
