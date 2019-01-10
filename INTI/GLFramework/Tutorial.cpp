@@ -50,28 +50,40 @@ void S02Tutorial::keyboard(int key, bool pressed, int x, int y, bool special)
 	{
 		switch (key)
 		{
-			case ' ': m_Framework->toScene("Main"); break;
-			case '0':
-			case '1':
-			case '2':
-			case '3':
-			case '4':
-			case '5':
-			case '6':
-			case '7':
-			case '8':
-			case '9':
-				if (putDate_one)
-				{
-					if (tmp_startDate < 10000000)
-					tmp_startDate = tmp_startDate*10 + (key-48);
-				}
-				else if (tmp_endDate < 10000000)
-				{
-					tmp_endDate = tmp_endDate * 10 + (key - 48);
-				}
+		case ' ': m_Framework->toScene("Main"); break;
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+			if (putDate_one)
+			{
+				if (tmp_startDate < 10000000)
+					tmp_startDate = tmp_startDate * 10 + (key - 48);
+			}
+			else if (tmp_endDate < 10000000)
+			{
+				tmp_endDate = tmp_endDate * 10 + (key - 48);
+			}
+			break;
+
+		case 8: //backspace
+			if (putDate_one)
+			{
+				tmp_startDate /= 10;
+			}
+			else if (putDate_two)
+			{
+				tmp_startDate /= 10;
+			}
 			break;
 		}
+		
 	}
 }
 
@@ -134,7 +146,7 @@ void S02Tutorial::SelectionUI()
 		sprintf(tmp, "%d", tmp_endDate);
 		print(tmp, -10, 20, -150);
 	}
-	
+
 
 	SelectionUI_SamplingRate();
 	SelectionUI_Date();
@@ -168,7 +180,7 @@ void S02Tutorial::SelectionUI_SamplingRate()
 	switch (config->SamplingRate)
 	{
 	case 0:
-		
+
 		glVertex2f(-45.f, 24.f);
 		glVertex2f(-45.f, 28.f);
 
@@ -249,7 +261,7 @@ void S02Tutorial::SelectionUI_Date()
 	{
 		glVertex2f(-15.f, 10.f);
 		glVertex2f(15.f, 10.f);
-		
+
 		glVertex2f(-15.f, 14.f);
 		glVertex2f(15.f, 14.f);
 	}
@@ -301,10 +313,10 @@ void S02Tutorial::SelectProcess(int x, int y)
 			config->Date_To = tmp_endDate;
 
 			//Save csv for DataCrop (tick,startDate,endDate)
-			config->save();		
+			config->save();
 			//Create Process made by python to Load Data
 			config->LoadData();
-			
+
 			m_Framework->toScene("Main");
 		}
 }

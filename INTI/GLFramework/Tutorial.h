@@ -42,6 +42,5 @@ private:
 	int tmp_startDate;
 	int tmp_endDate;
 
-	
 };
 
