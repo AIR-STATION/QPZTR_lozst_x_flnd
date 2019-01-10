@@ -26,6 +26,7 @@ public:
 	void whitespace();
 	void UI();
 	void DrawGraph();
+	void MouseWidget();
 	void loading();
 private:
 
@@ -38,5 +39,15 @@ private:
 	int dataNum;
 
 	bool dateGrid;
+	//
+	float max;
+	float min;
+	float wideFix;
+	float step_per_pixel;
+	//
+
+	int mx, my;
+	bool clicked;
+	bool mouseGrid;
 };
 

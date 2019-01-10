@@ -19,6 +19,27 @@ void S00Logo::init()
 	loading();
 
 	dateGrid = true;
+
+	mx = 0;
+	my = 0;
+
+	//그래프 상하 축척 수정
+	max = 0.f;
+	min = 100000.f;
+	wideFix = 1.f;
+
+	for (int i = 0; i < dataNum; i++)
+	{
+		if (data[i][2] > max)
+			max = data[i][2];
+		if (data[i][2] < min)
+			min = data[i][2];
+	}
+	wideFix = max - min;
+	step_per_pixel = wideFix / 480.f;
+
+	clicked = false;
+	mouseGrid = true;
 }
 
 void S00Logo::exit()
@@ -91,17 +112,26 @@ void S00Logo::keyboard(int key, bool pressed, int x, int y, bool special)
 		switch (key)
 		{
 		case 'g': if (dateGrid) dateGrid = false; else dateGrid = true; break;
+		case 'm': if (mouseGrid) mouseGrid = false; else mouseGrid = true; break;
 		}
 }
 
 void S00Logo::mouse(int button, bool pressed, int x, int y)
 {
-
+	if (pressed)
+	{
+		clicked = true;
+	}
+	else
+	{
+		clicked = false;
+	}
 }
 
 void S00Logo::motion(bool pressed, int x, int y)
 {
-
+	mx = x;
+	my = y;
 }
 
 void S00Logo::render()
@@ -109,6 +139,7 @@ void S00Logo::render()
 	whitespace();
 	UI();
 	DrawGraph();
+	MouseWidget();
 }
 
 void S00Logo::update(float fDeltaTime)
@@ -139,55 +170,137 @@ void S00Logo::UI()
 	glEnd();
 
 	glColor3f(0.2f, 0.2f, 0.2f);
-	char tmp[22];
-	sprintf(tmp, "%d ~ %d", config->Date_From, config->Date_To);
-	print(tmp, 20, 575, 0);
+	//char tmp[22];
+	//sprintf(tmp, "%d ~ %d", config->Date_From, config->Date_To);
+	//print(tmp, 20, 575, 0);
 
 	char tmp2[60];
 	sprintf(tmp2, "Sampling Rate : %d   (0:Date, 1:minute, 2: second, 3: tick)",config->SamplingRate);
 	print(tmp2, 60, 20, 0);
+	
+	for (int i = 0; i < dataNum - 1; i++)
+	{
+		if ((i == 0 || date[i] != date[i - 1]))
+		{
+			char tmp[20];
+			sprintf(tmp, "%d", date[i]);
+			print(tmp, 730.f - (800.f / (float)(dataNum - 1)) * (float)(i), 570, 0);
+		}
+	}
+	char _tmp[20];
+	sprintf(_tmp, "%f", max);
+	print(_tmp, 745.f, 545.f, 0);
 
+	char _tmp2[20];
+	sprintf(_tmp2, "%f", min);
+	print(_tmp2, 745.f, 65.f, 0);
+
+	for (int i = 1; i < 4; i++)
+	{
+		char tmp[20];
+		sprintf(tmp, "%f", min + (step_per_pixel*120.f) * i);
+		print(tmp, 745.f, 65.f + 120.f*i, 0);
+	}
+
+	if (mouseGrid && my < 560 && my > 40)
+	{
+		float mouse_on_chart = ((600.f - my) - 60.f) * step_per_pixel + min;
+
+		char _tmp3[20];
+		sprintf(_tmp3, "%f", mouse_on_chart);
+		print(_tmp3, 745.f, 600.f - (my - 5.f), 0);
+	}
 }
 
 void S00Logo::DrawGraph()
 {
-	//그래프 상하 축척 수정
-	float max = 0.f;
-	float min = 100000.f;
-	float wideFix = 1.f;
-	for (int i = 0; i < dataNum; i++)
-	{
-		if (data[i][2] > max)
-			max = data[i][2];
-		if (data[i][2] < min)
-			min = data[i][2];
-	}
-	wideFix = max - min;
-	//printf("%f %f\n", max, min);
 	//
 	glLineWidth(0.8f);
 	glBegin(GL_LINES);
+
+	glColor3f(0.76f, 0.76f, 0.76f);
+	for (int i = 0; i < 5; i++)
+	{
+		glVertex2d(0.f, 60.f + 120.f*i);
+		glVertex2d(800.f, 60.f + 120.f*i);
+	}
+	
+	glVertex2d(0.f, 300.f);
+	glVertex2d(800.f, 300.f);
+	glVertex2d(0.f, 420.f);
+	glVertex2d(800.f, 420.f);
+
 	for (int i = 0; i < dataNum - 1; i++)
 	{
-		if ((i == 0 || date[i] != date[i - 1]) && config->SamplingRate != 0 && dateGrid)
+		if ((i == 0 || date[i] != date[i - 1]) && dateGrid)
 		{
 			glColor3f(0.32f, 0.32f, 0.32f);
-			glVertex2f((800.f / (float)(dataNum - 1)) * (float)i, 40);
-			glVertex2f((800.f / (float)(dataNum - 1)) * (float)i, 560);
-
-			//char tmp[20];
-			//sprintf(tmp, "%d", date[i]);
-			//print(tmp, 60, 550, 0);
+			glVertex2f(800.f - (800.f / (float)(dataNum - 1)) * (float)i, 40.f);
+			glVertex2f(800.f - (800.f / (float)(dataNum - 1)) * (float)i, 560.f);
 		}
 
 		if (data[i + 1][2] - data[i][2] > 0)
-			glColor3f(0.95f, 0.12f, 0.12f);
-		else
 			glColor3f(0.12f, 0.12f, 0.95f);
-		glVertex2f((800.f / (float)(dataNum - 1)) * (float)i, ((data[i][2] - (float)(max + min) / 2.f))*(40.f - wideFix) + 350.f);
-		glVertex2f((800.f / (float)(dataNum - 1)) * (float)(i + 1), ((data[i + 1][2] - (float)(max + min) / 2.f))*(40.f - wideFix) + 350.f);
+		else
+			glColor3f(0.95f, 0.12f, 0.12f);
+		glVertex2f(800.f - (800.f / (float)(dataNum - 1)) * (float)i,(data[i][2] - min) /wideFix * 480.f + 60.f);
+		glVertex2f(800.f - (800.f / (float)(dataNum - 1)) * (float)(i + 1), (data[i+1][2] - min) / wideFix * 480.f + 60.f);
 
+		if (data[i][2] == max)
+		{
+			glColor3f(0.9f, 0.2f, 0.3f);
+			glVertex2f(800.f - (800.f / (float)(dataNum - 1)) * (float)i, 540.f);
+			glVertex2f(800.f, 540.f);
+		}
+		if (data[i][2] == min)
+		{
+			glColor3f(0.3f, 0.2f, 0.9f);
+			glVertex2f(800.f - (800.f / (float)(dataNum - 1)) * (float)i, 60.f);
+			glVertex2f(800.f, 60.f);
+		}
 	}
+	
+	
 
 	glEnd();
+}
+
+void S00Logo::MouseWidget()
+{
+	if (mouseGrid && my < 560 && my > 40)
+	{
+		glLineWidth(0.8f);
+		glColor3f(0.35f, 0.35f, 0.35f);
+
+		glBegin(GL_LINES);
+		glVertex2f(0.f, 600.f-my);
+		glVertex2f(800.f, 600.f-my);
+		glVertex2f(mx, 0.f);
+		glVertex2f(mx, 600.f);
+		glEnd();
+	}
+	if (clicked && my < 560 && my > 40)
+	{
+		// 이거 나중에하셈
+		/*glColor3f(0.9f, 0.9f, 0.6f);
+		glBegin(GL_QUADS);
+		glVertex2f(mx + 5.f, 600.f-(my + 5.f));
+		glVertex2f(mx + 5.f, 600.f- (my + 60.f));
+		glVertex2f(mx + 80.f, 600.f - (my + 60.f));
+		glVertex2f(mx + 80.f, 600.f - (my + 5.f));
+		glEnd();*/
+
+		float tmp_ending_cost = 0.f;
+		for (int i = 0; i < dataNum - 1; i++)
+		{
+			if (800.f - (800.f / (float)(dataNum - 1)) * (float)i > mx && 800.f - (800.f / (float)(dataNum - 1)) * (float)(i+1) < mx)
+			{
+				tmp_ending_cost = data[i][2];
+			}
+		}
+		char _tmp[20];
+		sprintf(_tmp, "%f", tmp_ending_cost);
+		print(_tmp, mx + 10.f, 600.f-(my-5.f), 0);
+
+	}
 }
