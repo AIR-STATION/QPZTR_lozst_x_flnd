@@ -54,6 +54,21 @@ std::vector<std::string> SettingData::csv_read_row(std::istream & file, char del
 
 void SettingData::save()
 {
+	printf("save toPython");
 	std::ofstream file("toPython.csv");
 	file << SamplingRate << ", " << Date_From << ", " << Date_To;
+}
+
+void SettingData::LoadData()
+{
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+	//
+	si.cb = sizeof(STARTUPINFO);
+	::CreateProcess("dataCrop.exe", NULL, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
+	WaitForSingleObject(pi.hProcess, INFINITE);
+	printf("data loaded!");
 }

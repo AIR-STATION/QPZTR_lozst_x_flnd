@@ -143,7 +143,7 @@ void S00Logo::DrawGraph()
 			min = data[i];
 	}
 	wideFix = max - min;
-	printf("%f %f\n", max, min);
+	//printf("%f %f\n", max, min);
 	//
 	glLineWidth(0.8f);
 	glBegin(GL_LINES);
@@ -153,8 +153,8 @@ void S00Logo::DrawGraph()
 			glColor3f(0.95f, 0.12f, 0.12f);
 		else
 			glColor3f(0.12f, 0.12f, 0.95f);
-		glVertex2f((800.f / (float)dataNum) * (float)i, ((data[i] - (float)(max + min) / 2.f))*(40.f- wideFix) + 350.f);
-		glVertex2f((800.f / (float)dataNum) * (float)(i+1), ((data[i+1] - (float)(max + min) / 2.f))*(40.f - wideFix) + 350.f);
+		glVertex2f((800.f / (float)(dataNum-1)) * (float)i, ((data[i] - (float)(max + min) / 2.f))*(40.f- wideFix) + 350.f);
+		glVertex2f((800.f / (float)(dataNum-1)) * (float)(i+1), ((data[i+1] - (float)(max + min) / 2.f))*(40.f - wideFix) + 350.f);
 	}
 	glEnd();
 }

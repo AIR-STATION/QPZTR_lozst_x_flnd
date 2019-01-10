@@ -300,9 +300,11 @@ void S02Tutorial::SelectProcess(int x, int y)
 			config->Date_From = tmp_startDate;
 			config->Date_To = tmp_endDate;
 
-			config->save();		//Save csv for DataCrop (tick,startDate,endDate)
-
-			//TODO: Create Process made by python to Load Data
+			//Save csv for DataCrop (tick,startDate,endDate)
+			config->save();		
+			//Create Process made by python to Load Data
+			config->LoadData();
+			
 			m_Framework->toScene("Main");
 		}
 }

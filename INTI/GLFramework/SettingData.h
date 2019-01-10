@@ -19,6 +19,7 @@ public:
 	
 	std::vector<std::string> csv_read_row(std::istream & file, char delimiter);
 	void save();
+	void LoadData();
 
 	int SamplingRate;
 	int Date_From;
