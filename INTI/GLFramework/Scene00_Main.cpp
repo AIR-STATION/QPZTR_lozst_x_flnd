@@ -38,6 +38,8 @@ void S00Logo::init()
 	wideFix = max - min;
 	step_per_pixel = wideFix / 480.f;
 
+	minMaxGrid = true;
+
 	clicked = false;
 	mouseGrid = true;
 	drag = false;
@@ -121,6 +123,8 @@ void S00Logo::keyboard(int key, bool pressed, int x, int y, bool special)
 		{
 		case 'g': if (dateGrid) dateGrid = false; else dateGrid = true; break;
 		case 'm': if (mouseGrid) mouseGrid = false; else mouseGrid = true; break;
+		case 'c': if (minMaxGrid) minMaxGrid = false; else minMaxGrid = true; break;
+		case 'r': xDist = 0; yDist = 0; drag_mouse_xy[0] = 0; drag_mouse_xy[1] = 0; ZoomIn = 0; reshape(800 + ZoomIn, 600 + ZoomIn); break;
 		case '+': ZoomIn += 10; reshape(800 + ZoomIn, 600 + ZoomIn); break;
 		case '-': ZoomIn -= 10; reshape(800 + ZoomIn, 600 + ZoomIn); break;
 		}
@@ -133,6 +137,7 @@ void S00Logo::mouse(int button, bool pressed, int x, int y)
 		if (pressed)
 		{
 			clicked = true;
+			//printf("%d %d -> %f %f\n", x, 600 - y, point((float)x,0), point(float(600.f-y),1));
 		}
 		else
 		{
@@ -156,15 +161,15 @@ void S00Logo::mouse(int button, bool pressed, int x, int y)
 			}
 			if (ZoomIn < point(xDist))
 			{
-				xDist = (float)(ZoomIn / (float)(800.f+ZoomIn)) * 800.f;
+				xDist = point((float)ZoomIn,0);
 			}
 			if (yDist < 0)
 			{
 				yDist = 0;
 			}
-			if (ZoomIn < point(yDist))
+			if (ZoomIn < _point(yDist))
 			{
-				yDist = (float)(ZoomIn / (float)(600.f + ZoomIn)) * 600.f;
+				yDist = point((float)ZoomIn,1);
 			}
 			reshape(800 + ZoomIn, 600 + ZoomIn);
 		}
@@ -172,11 +177,46 @@ void S00Logo::mouse(int button, bool pressed, int x, int y)
 	else if (button == 3)
 	{
 		ZoomIn += 5;
+		if (xDist < 0)
+		{
+			xDist = 0;
+		}
+		if (ZoomIn < point(xDist))
+		{
+			xDist = point((float)ZoomIn, 0);
+		}
+		if (yDist < 0)
+		{
+			yDist = 0;
+		}
+		if (ZoomIn < _point(yDist))
+		{
+			yDist = point((float)ZoomIn, 1);
+		}
+
 		reshape(800 + ZoomIn, 600 + ZoomIn);
 	}
 	else if (button == 4)
 	{
 		ZoomIn -= 5;
+		if (ZoomIn < 0)
+			ZoomIn = 0;
+		if (xDist < 0)
+		{
+			xDist = 0;
+		}
+		if (ZoomIn < point(xDist))
+		{
+			xDist = point((float)ZoomIn, 0);
+		}
+		if (yDist < 0)
+		{
+			yDist = 0;
+		}
+		if (ZoomIn < _point(yDist))
+		{
+			yDist = point((float)ZoomIn, 1);
+		}
 		reshape(800 + ZoomIn, 600 + ZoomIn);
 	}
 }
@@ -189,6 +229,22 @@ void S00Logo::motion(bool pressed, int x, int y)
 	{
 		xDist = drag_mouse_xy[0] - x;
 		yDist = drag_mouse_xy[1] - (600-y);
+		if (xDist < 0)
+		{
+			xDist = 0;
+		}
+		if (ZoomIn < point(xDist))
+		{
+			xDist = point((float)ZoomIn, 0);
+		}
+		if (yDist < 0)
+		{
+			yDist = 0;
+		}
+		if (ZoomIn < _point(yDist))
+		{
+			yDist = point((float)ZoomIn, 1);
+		}
 		reshape(800 + ZoomIn, 600 + ZoomIn);
 	}
 }
@@ -250,28 +306,30 @@ void S00Logo::UI()
 			print(tmp, 730.f - (800.f / (float)(dataNum - 1)) * (float)(i), 570, 0);
 		}
 	}
-	char _tmp[20];
-	sprintf(_tmp, "%.2f", max);
-	print(_tmp, 745.f, 545.f, 0);
-
-	char _tmp2[20];
-	sprintf(_tmp2, "%.2f", min);
-	print(_tmp2, 745.f, 65.f, 0);
-
-	for (int i = 1; i < 4; i++)
+	if (minMaxGrid)
 	{
-		char tmp[20];
-		sprintf(tmp, "%.2f", min + (step_per_pixel*120.f) * i);
-		print(tmp, 745.f, 65.f + 120.f*i, 0);
+		char _tmp[20];
+		sprintf(_tmp, "%.2f", max);
+		print(_tmp, point(745.f + point(xDist), 0), 545.f, 0);
+
+		char _tmp2[20];
+		sprintf(_tmp2, "%.2f", min);
+		print(_tmp2, point(745.f + point(xDist), 0), 65.f, 0);
+
+		for (int i = 1; i < 4; i++)
+		{
+			char tmp[20];
+			sprintf(tmp, "%.2f", min + (step_per_pixel*120.f) * i);
+			print(tmp, point(745.f + point(xDist), 0), 65.f + 120.f*i, 0);
+		}
 	}
-
-	if (mouseGrid && my < 560 && my > 40)
+	if (mouseGrid)
 	{
-		float mouse_on_chart = ((600.f - my) - 60.f) * step_per_pixel + min;
+		float mouse_on_chart = ((point(600.f,1) - point(my,1)) - 60.f + yDist) * step_per_pixel + min;
 
 		char _tmp3[20];
 		sprintf(_tmp3, "%.2f", mouse_on_chart);
-		print(_tmp3, 745.f, 600.f - (my - 5.f), 0);
+		print(_tmp3, point(745.f + point(xDist),0), point(600.f - (my - 5.f) + _point(yDist),1), 0);
 	}
 }
 
@@ -324,22 +382,21 @@ void S00Logo::DrawGraph()
 	}
 	
 	
-
 	glEnd();
 }
 
 void S00Logo::MouseWidget()
 {
-	if (mouseGrid && my < 560 && my > 40)
+	if (mouseGrid)
 	{
 		glLineWidth(0.8f);
 		glColor3f(0.35f, 0.35f, 0.35f);
 
 		glBegin(GL_LINES);
-		glVertex2f(0.f, 600.f-my);
-		glVertex2f(800.f, 600.f-my);
-		glVertex2f(mx, 40.f);
-		glVertex2f(mx, 560.f);
+		glVertex2f(0.f, point(600.f-my + _point(yDist),1));
+		glVertex2f(800.f, point(600.f-my + _point(yDist),1));
+		glVertex2f(point(mx + point(xDist),0), 40.f);
+		glVertex2f(point(mx + point(xDist),0), 560.f);
 		glEnd();
 	}
 	if (clicked && my < 560 && my > 40)
@@ -356,14 +413,14 @@ void S00Logo::MouseWidget()
 		float tmp_ending_cost = 0.f;
 		for (int i = 0; i < dataNum - 1; i++)
 		{
-			if (800.f - (800.f / (float)(dataNum - 1)) * (float)i > mx && 800.f - (800.f / (float)(dataNum - 1)) * (float)(i+1) < mx)
+			if (800.f - (800.f / (float)(dataNum - 1)) * (float)i > point(mx+point(xDist),0) && 800.f - (800.f / (float)(dataNum - 1)) * (float)(i+1) < point(mx + point(xDist),0))
 			{
 				tmp_ending_cost = data[i][2];
 			}
 		}
 		char _tmp[20];
 		sprintf(_tmp, "%.2f", tmp_ending_cost);
-		print(_tmp, mx + 10.f, 600.f-(my-5.f), 0);
+		print(_tmp, point(mx + point(xDist) + 10.f,0), point(600.f-(my-5.f - _point(yDist)),1), 0);
 	}
 }
 
@@ -371,8 +428,18 @@ int S00Logo::point(int location)
 {
 	return location + ((float)(location*ZoomIn)/800.f);
 }
-
+int S00Logo::_point(int location)
+{
+	return location + ((float)(location*ZoomIn) / 600.f);
+}
 float S00Logo::point(float location)
 {
-	return location + ((location*(float)ZoomIn) / 800.f);
+	return location + ((float)(location*ZoomIn) / 800.f);
+}
+float S00Logo::point(float location,bool x)
+{
+	if (x)
+		return (location / (float)(600.f + ZoomIn)) * 600.f;
+	else
+		return (location / (float)(800.f + ZoomIn)) * 800.f;
 }

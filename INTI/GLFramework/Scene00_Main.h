@@ -28,7 +28,9 @@ public:
 	void DrawGraph();
 	void MouseWidget();
 	int point(int location);
+	int _point(int location);
 	float point(float location);
+	float point(float location,bool x);
 	void loading();
 private:
 
@@ -46,6 +48,7 @@ private:
 	float min;
 	float wideFix;
 	float step_per_pixel;
+	bool minMaxGrid;
 	//
 	int mx, my;
 	bool clicked;
