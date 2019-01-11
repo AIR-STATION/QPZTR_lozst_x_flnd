@@ -27,6 +27,8 @@ public:
 	void UI();
 	void DrawGraph();
 	void MouseWidget();
+	int point(int location);
+	float point(float location);
 	void loading();
 private:
 
@@ -45,9 +47,15 @@ private:
 	float wideFix;
 	float step_per_pixel;
 	//
-
 	int mx, my;
 	bool clicked;
+	bool drag;
 	bool mouseGrid;
+
+	int ZoomIn;
+	int xDist = 0;
+	int yDist = 0;
+
+	int drag_mouse_xy[2];
 };
 
